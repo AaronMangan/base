@@ -76,6 +76,7 @@ const Sidebar = () => {
       </div>
       <nav className="mt-6">
         <ul>
+          {/* Handle menu items */}
           {menuItems.map((item, index) => (
             <li key={index}>
               <div
