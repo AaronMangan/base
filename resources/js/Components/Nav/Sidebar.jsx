@@ -4,81 +4,103 @@ import {
   XCircleIcon,
   InformationCircleIcon,
   DevicePhoneMobileIcon,
-  Bars3Icon,
-  PhoneIcon, // Use PhoneIcon or another appropriate icon
+  // ChevronDoubleLeftIcon,
+  ChevronDoubleRightIcon,
+  Cog6ToothIcon,
+  UserGroupIcon,
+  FingerPrintIcon,
+  WrenchScrewdriverIcon
 } from '@heroicons/react/24/outline'; // Heroicons v2 Outline icons
+
+const menuItems = [
+  {
+    name: 'Home',
+    icon: <HomeIcon className="w-5 h-5" />,
+    path: '/home',
+    children: []
+  },
+  {
+    name: 'Manage',
+    icon: <Cog6ToothIcon className="w-5 h-5" />,
+    path: '',
+    children: [
+      {
+        name: 'Users',
+        icon: <UserGroupIcon className="w-5 h-5" />,
+        path: '/users',
+      },
+      {
+        name: 'Roles',
+        icon: <FingerPrintIcon className="w-5 h-5" />,
+        path: '/users',
+      },
+      {
+        name: 'Config',
+        icon: <WrenchScrewdriverIcon className="w-5 h-5" />,
+        path: '/users',
+      },
+    ]
+  },
+];
 
 const Sidebar = () => {
   const appName = 'Flow';
   const [collapsed, setCollapsed] = useState(false);
 
+  const [openItem, setOpenItem] = useState(null);
+
+  const toggleSubMenu = (index) => {
+    setOpenItem(openItem === index ? null : index);  // Toggle the open/close of sub-items
+  };
+  
   // Toggle the collapsed state
   const toggleSidebar = () => setCollapsed(!collapsed);
 
   return (
     <div className={`h-screen ${collapsed ? 'w-15' : 'w-64'} bg-gray-800 text-white transition-all duration-300`}>
-      {/* Sidebar Header */}
-      <div className="flex items-center justify-between h-16 px-4 bg-gray-900">
-        {/* Logo/Title */}
-        {!collapsed && <h1 className="text-xl font-semibold">{appName}</h1>}
-        {/* Toggle Button */}
+      <div className="flex items-center px-2 py-2 pr-2 space-x-4 hover:bg-gray-700">
+        { !collapsed && 
+          <img
+            src='https://via.placeholder.com/40?text=TU'  // Assuming `user.profileImage` is the URL of the user's image
+            alt="User Profile"
+            className="w-10 h-10 border-2 border-gray-300 rounded-full"
+          />
+        }
+        {!collapsed && <span className="w-full font-semibold text-white">Test User</span>}
+        
         <button onClick={toggleSidebar} className="text-white focus:outline-none">
           {
-            !collapsed && <XCircleIcon className="w-5 h-5"/> || <Bars3Icon className="w-5 h-5"/>
+            !collapsed && <XCircleIcon className="w-5 h-5"/> || <ChevronDoubleRightIcon className="w-5 h-5"/>
           }
         </button>
       </div>
-
-      {/* Sidebar Links */}
       <nav className="mt-6">
         <ul>
-          {/* Home Link */}
-          <li className="flex items-center px-4 py-2 space-x-4 hover:bg-gray-700">
-            {!collapsed ? (
-              <>
-                <HomeIcon className="w-5 h-5" />
-                <span>Home</span>
-              </>
-            ) : (
-              <HomeIcon className="w-5 h-5" />
-            )}
-          </li>
+          {menuItems.map((item, index) => (
+            <li key={index}>
+              <div
+                className="flex items-center px-2 py-2 space-x-4 hover:bg-gray-700"
+                onClick={() => item.children.length > 0 && toggleSubMenu(index)}
+              >
+                <span className="w-5 h-5">{item.icon}</span>
+                {!collapsed && <span>{item.name}</span>}
+              </div>
 
-          {/* About Link */}
-          <li className="flex items-center px-4 py-2 space-x-4 hover:bg-gray-700">
-            {!collapsed ? (
-              <>
-                <InformationCircleIcon className="w-5 h-5" />
-                <span>About</span>
-              </>
-            ) : (
-              <InformationCircleIcon className="w-5 h-5" />
-            )}
-          </li>
-
-          {/* Services Link */}
-          <li className="flex items-center px-4 py-2 space-x-4 hover:bg-gray-700">
-            {!collapsed ? (
-              <>
-                <DevicePhoneMobileIcon className="w-5 h-5" />
-                <span>Services</span>
-              </>
-            ) : (
-              <DevicePhoneMobileIcon className="w-5 h-5" />
-            )}
-          </li>
-
-          {/* Contact Link - Replaced SupportIcon with PhoneIcon */}
-          <li className="flex items-center px-4 py-2 space-x-4 hover:bg-gray-700">
-            {!collapsed ? (
-              <>
-                <PhoneIcon className="w-5 h-5" />
-                <span>Contact</span>
-              </>
-            ) : (
-              <PhoneIcon className="w-5 h-5" />
-            )}
-          </li>
+              {/* Handle sub-menu items (children) */}
+              {item.children.length > 0 && openItem === index && (
+                <ul className={`ml-6 ${collapsed ? 'hidden' : ''}`}>
+                  {item.children.map((subItem, subIndex) => (
+                    <li key={subIndex}>
+                      <div className="flex items-center px-4 py-2 space-x-4 hover:bg-gray-600">
+                        <span className="w-5 h-5">{subItem.icon}</span>
+                        {!collapsed && <span>{subItem.name}</span>}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </li>
+          ))}
         </ul>
       </nav>
     </div>
