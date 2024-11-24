@@ -24,7 +24,7 @@ createServer((page) =>
                     location: new URL(page.props.ziggy.location),
                 });
 
-            return <><Sidebar/><App {...props} /></>;
+            return <App {...props} />;
         },
     }),
 );
