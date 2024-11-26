@@ -4,7 +4,7 @@ Base is a template repository that can be used to quickly scaffold web applicati
 
 It's built on Laravel and React to provide a familiar experience and let you focus on the important stuff.
 
-The idea is that it's a boilerplate for a multi-tenancy web application that provides a lot of the basic items that you;d probably be adding anyway. It is however, only a template you are free to change, add, remove whatever you like from your app.
+The idea is that it's a boilerplate for a multi-tenancy web application that provides a lot of the basic items that you'd probably be adding anyway. It is however, only a template - you are free to change, add, remove whatever you like from your app.
 
 ## What's Included
 
@@ -13,7 +13,7 @@ Base includes the following built in items:
 - Dashboard
 - User Management
 - Permissions
-- Prebuilt Components
+- (Some) Prebuilt Components
 - Navigation
 - Some Basic Metadata (Statuses)
 - Soft Deleting
