@@ -38,6 +38,7 @@ Go to https://github.com/AaronMangan/base and click the blue "Use This Repositor
 ## Permissions
 
 Currently **Base** provides the following roles already defined for you:
+
     - `super` This is the Super Admin role, it allows anyone with this role to see data for all organisations in your application.
     - `admin` Provides the user with administrator permissions, but only for objects in the admin's organisation.
     - `readonly` Allows users with this role to view but not update or manage items in the platform. They may only view item that belong to their organisation
