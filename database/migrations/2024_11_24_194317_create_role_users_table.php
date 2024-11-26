@@ -14,6 +14,7 @@ return new class () extends Migration {
             $table->id();
             $table->foreignId('role_id')->constrained('roles');
             $table->foreignId('user_id')->constrained('users');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
@@ -24,6 +25,9 @@ return new class () extends Migration {
      */
     public function down(): void
     {
+        Schema::table('role_user', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('role_users');
     }
 };
