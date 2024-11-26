@@ -19,6 +19,7 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        // Check that we have the necessary credentials.
         if (!$this->environmentCredentials()) {
             throw new \Exception('Please check your .env file has the right credentials, or remove this seeder');
         }
@@ -81,17 +82,22 @@ class DatabaseSeeder extends Seeder
         $adminUser->assignRole($roleAdmin);
     }
 
+    /**
+     * A basic check that the env file has the defined values to run the seeder.
+     * Add the required values into an array. It defaults to false if the value doesn't exist.
+     * Then we simply check if false is in the array and viola, we know if the variables were set.
+     *
+     * @return boolean|null
+     */
     private function environmentCredentials(): ?bool
     {
-        $data = [
+        return (in_array(false, [
             env('ADMIN_ORG_NAME', false),
             env('ADMIN_NAME', false),
             env('ADMIN_PASSWORD', false),
             env('USER_ORG_NAME', false),
             env('USER_NAME', false),
             env('USER_PASSWORD', false),
-        ];
-
-        return (in_array(false, $data)) ? false : true;
+        ])) ? false : true;
     }
 }
