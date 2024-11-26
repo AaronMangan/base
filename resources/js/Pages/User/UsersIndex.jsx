@@ -12,7 +12,7 @@ import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useRef, useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
-
+import { toast } from 'react-toastify';
 export default function UserIndex({ auth, users }) {
     const [editUser, setEditUser] = useState(false);
     const [activeUser, setActiveUser] = useState({});
@@ -25,11 +25,17 @@ export default function UserIndex({ auth, users }) {
      */
     const getType = (type) => {
         switch (type) {
+            case 'super':
+                return 'danger';
             case 'admin':
                 return 'success';
             default:
                 return 'primary';
         }
+    };
+
+    const deleteUser = (user) => {
+        // axios.delete()
     };
 
     const {
@@ -49,7 +55,10 @@ export default function UserIndex({ auth, users }) {
         e.preventDefault();
         post(route('user.edit', activeUser.id), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
+            onSuccess: () => {
+                toast.success("User was saved successfully!");
+                closeModal();
+            },
             onError: () => null,
             onFinish: () => reset(),
         });
@@ -108,13 +117,16 @@ export default function UserIndex({ auth, users }) {
                             })
                             setEditUser(true);
                         }}>Edit</PrimaryButton>
-                        <DangerButton onClick={() => {alert('To Do - Implement Delete')}}>Delete</DangerButton>
+                        <DangerButton onClick={() => {deleteUser(row)}}>Delete</DangerButton>
                     </>
                 )
             },
         }
     ];
 
+    /**
+     * Runs when the component is mounted and when the dependencies listed change.
+     */
     useEffect(() => {
         // 
         const roles = auth.user.roles?.map(r => {return r.name});
@@ -196,14 +208,17 @@ export default function UserIndex({ auth, users }) {
                         />}
                     </div>
 
+                    {/* Buttons to handle saving or cancelling */}
                     <div className="flex justify-end mt-6">
+                        {/* Save the changes to the user */}
+                        <PrimaryButton className="mr-2" disabled={processing}>
+                            Save
+                        </PrimaryButton>
+                        
+                        {/* Cancel */}
                         <SecondaryButton onClick={closeModal}>
                             Cancel
                         </SecondaryButton>
-
-                        <PrimaryButton className="ms-3" disabled={processing}>
-                            Save
-                        </PrimaryButton>
                     </div>
                 </form>
             </Modal>
