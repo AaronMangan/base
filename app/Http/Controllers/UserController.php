@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Http\Requests\UpdateUserRequest;
 use Inertia\Inertia;
 use App\Models\User;
 
@@ -46,12 +47,15 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(Request $request, int $id)
+    public function edit(Request $request, User $user)
     {
-        $user = auth()->user()->organisation->users;
+        // Check if the authenticated user can view this user.
+        if ($request->user()->cannot('update', $user)) {
+            abort(403);
+        }
 
-        // Check if the authenticated user can view this user
-        $this->authorize('view', $user);
+        //
+        $user = auth()->user()->organisation->users;
 
         // return view('users.show', compact('user'));
         return Inertia::render('User/UserEdit', [
@@ -62,9 +66,23 @@ class UserController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(UpdateUserRequest $request, User $user)
     {
-        //
+        // Make sure the user can update the model.
+        if ($request->user()->cannot('update', $user)) {
+            abort(403);
+        }
+
+        // Get the data for the user.
+        $data = $request->safe()->only(['name', 'email']);
+        $updated = $user->update($data);
+
+        // Redirect back to the user index page or show page
+        return redirect()->route('user.index')
+            ->with(
+                $updated ? 'success' : 'fail',
+                $updated ? 'User updated successfully.' : 'An error occurred saving the user'
+            );
     }
 
     /**

@@ -16,6 +16,7 @@ return new class () extends Migration {
             $table->string('address', 255);
             $table->string('phone', 255);
             $table->json('settings');
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -30,6 +31,9 @@ return new class () extends Migration {
      */
     public function down(): void
     {
+        Schema::table('organisations', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('organisations');
     }
 };

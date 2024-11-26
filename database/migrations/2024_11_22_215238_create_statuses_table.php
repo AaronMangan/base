@@ -17,6 +17,7 @@ return new class () extends Migration {
             $table->string('type', 255);
             $table->unsignedBigInteger('organisation_id')->nullable();
             $table->foreign('organisation_id')->references('id')->on('organisations');
+            $table->softDeletes();
             $table->timestamps();
         });
 
@@ -32,6 +33,9 @@ return new class () extends Migration {
      */
     public function down(): void
     {
+        Schema::table('statuses', function (Blueprint $table) {
+            $table->dropSoftDeletes();
+        });
         Schema::dropIfExists('statuses');
     }
 };

@@ -9,15 +9,6 @@ use Illuminate\Support\Facades\Gate;
 class AppServiceProvider extends ServiceProvider
 {
     /**
-     * Register these policies.
-     *
-     * @var array
-     */
-    protected $policies = [
-        User::class => UserPolicy::class,
-    ];
-
-    /**
      * Register any application services.
      */
     public function register(): void
