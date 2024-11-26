@@ -49,13 +49,13 @@ class DatabaseSeeder extends Seeder
 
         // Create a Super role
         $roleSuper = Role::create(['name' => 'super']);
-        $permissionSuper = Permission::create(['name' => 'full permissions']);
+        $permissionSuper = Permission::create(['guard_name' => 'web', 'name' => 'full permissions']);
         $roleSuper->givePermissionTo($permissionSuper);
 
         // Create a super admin user.
         $adminUser = User::create([
             'name' => env('ADMIN_NAME'),
-            'email' => env('ADMIN_NAME'),
+            'email' => env('ADMIN_EMAIL'),
             'password' => env('ADMIN_PASSWORD'),
             'organisation_id' => $superOrg->id,
             'status_id' => $activeStatus->id ?? null,
@@ -65,14 +65,14 @@ class DatabaseSeeder extends Seeder
 
         // Create an admin org and permissions
         $roleAdmin = Role::create(['name' => 'admin']);
-        $permissionAdmin = Permission::create(['name' => 'admin']);
+        $permissionAdmin = Permission::create(['guard_name' => 'web', 'name' => 'admin']);
         $roleAdmin->givePermissionTo($permissionAdmin);
 
         // Create an admin user.
         $adminUser = User::create([
-            'name' => 'Jasper Hurst-Mangan',
-            'email' => 'j.hurst-mangan@localhost.test',
-            'password' => 'j.hurst-mangan@localhost.test',
+            'name' => env('USER_NAME'),
+            'email' => env('USER_EMAIL'),
+            'password' => env('USER_PASSWORD'),
             'organisation_id' => $adminOrg->id,
             'status_id' => $activeStatus->id ?? null,
         ]);

@@ -15,7 +15,7 @@ import { useForm } from '@inertiajs/react';
 
 export default function UserIndex({ users }) {
     const [editUser, setEditUser] = useState(false);
-    const passwordInput = useRef();
+    const [activeUser, setActiveUser] = useState({});
 
     /**
      * Return the type based on role.
@@ -34,22 +34,22 @@ export default function UserIndex({ users }) {
     const {
         data,
         setData,
-        delete: destroy,
+        post,
         processing,
         reset,
         errors,
         clearErrors,
     } = useForm({
-        password: '',
+        name: activeUser.name || '',
+        email: activeUser.email || '',
     });
 
-    const deleteUser = (e) => {
+    const postUser = (e) => {
         e.preventDefault();
-
-        destroy(route('profile.destroy'), {
+        post(route('user.edit', activeUser.id), {
             preserveScroll: true,
             onSuccess: () => closeModal(),
-            onError: () => passwordInput.current.focus(),
+            onError: () => null,
             onFinish: () => reset(),
         });
     };
@@ -95,10 +95,18 @@ export default function UserIndex({ users }) {
         },
         {
             name: 'Actions',
-            cell: () => {
+            cell: (row) => {
                 return (
                     <>
-                        <PrimaryButton className="mr-1" onClick={() => {setEditUser(true)}}>Edit</PrimaryButton>
+                        <PrimaryButton className="mr-1" onClick={() => {
+                            // Set the data.
+                            setActiveUser(row);
+                            setData({
+                                name: row.name || '',
+                                email: row.email || ''
+                            })
+                            setEditUser(true);
+                        }}>Edit</PrimaryButton>
                         <DangerButton onClick={() => {alert('To Do - Implement Delete')}}>Delete</DangerButton>
                     </>
                 )
@@ -126,43 +134,59 @@ export default function UserIndex({ users }) {
             </>
 
             <Modal show={editUser} onClose={closeModal}>
-                <form onSubmit={deleteUser} className="p-6">
+                <form onSubmit={postUser} className="p-6">
                     <h2 className="text-lg font-medium text-gray-900 dark:text-gray-100">
-                        Are you sure you want to delete your account?
+                        Edit User ({activeUser.name})
                     </h2>
 
-                    <p className="mt-1 text-sm text-gray-600 dark:text-gray-400">
-                        Once your account is deleted, all of its resources and
-                        data will be permanently deleted. Please enter your
-                        password to confirm you would like to permanently delete
-                        your account.
-                    </p>
-
+                    {/* User name field */}
                     <div className="mt-6">
                         <InputLabel
-                            htmlFor="password"
-                            value="Password"
-                            className="sr-only"
+                            htmlFor="name"
+                            value="Name"
+                            className=""
                         />
-
                         <TextInput
-                            id="password"
-                            type="password"
-                            name="password"
-                            ref={passwordInput}
-                            value={data.password}
+                            id="name"
+                            type="text"
+                            name="name"
+                            value={data.name}
                             onChange={(e) =>
-                                setData('password', e.target.value)
+                                setData('name', e.target.value)
                             }
-                            className="block w-3/4 mt-1"
+                            className="block w-full mt-1"
                             isFocused
-                            placeholder="Password"
+                            placeholder="User name"
                         />
-
-                        <InputError
-                            message={errors.password}
+                        {errors && errors.name && <InputError
+                            message={errors.name}
                             className="mt-2"
+                        />}
+                    </div>
+
+                    {/* User email field */}
+                    <div className="mt-6">
+                        <InputLabel
+                            htmlFor="email"
+                            value="e-mail"
+                            className=""
                         />
+                        <TextInput
+                            id="name"
+                            type="text"
+                            name="name"
+                            value={data.email}
+                            onChange={(e) =>
+                                setData('email', e.target.value)
+                            }
+                            className="block w-full mt-1"
+                            isFocused
+                            placeholder="User name"
+                        />
+                        {errors && errors.email && <InputError
+                            message={errors.email}
+                            className="mt-2"
+                        />}
                     </div>
 
                     <div className="flex justify-end mt-6">
@@ -170,9 +194,9 @@ export default function UserIndex({ users }) {
                             Cancel
                         </SecondaryButton>
 
-                        <DangerButton className="ms-3" disabled={processing}>
-                            Delete Account
-                        </DangerButton>
+                        <PrimaryButton className="ms-3" disabled={processing}>
+                            Save
+                        </PrimaryButton>
                     </div>
                 </form>
             </Modal>
