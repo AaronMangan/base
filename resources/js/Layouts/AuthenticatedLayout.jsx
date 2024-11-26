@@ -14,7 +14,7 @@ export default function AuthenticatedLayout({ header, children }) {
 
     return (
         <div className="flex min-h-screen bg-gray-100 w-[100vw] min-w-screen dark:bg-gray-900">
-            <Sidebar/>
+            <Sidebar />
             <main className="w-full">{children}</main>
         </div>
     );

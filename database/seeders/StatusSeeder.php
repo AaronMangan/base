@@ -16,21 +16,25 @@ class StatusSeeder extends Seeder
             'name' => 'active',
             'description' => 'The item is active',
             'organisation_id' => null,
+            'type' => 'primary'
         ],
         'inactive' => [
             'name' => 'inactive',
             'description' => 'The item is not active',
             'organisation_id' => null,
+            'type' => 'secondary'
         ],
         'deleted' => [
             'name' => 'deleted',
             'description' => 'The item has been deleted',
             'organisation_id' => null,
+            'type' => 'danger'
         ],
         'custom' => [
             'name' => 'new',
             'description' => 'The item is new',
             'organisation_id' => null,
+            'type' => 'custom'
         ],
     ];
 

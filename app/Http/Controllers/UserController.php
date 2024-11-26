@@ -46,9 +46,17 @@ class UserController extends Controller
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(string $id)
+    public function edit(Request $request, int $id)
     {
-        //
+        $user = auth()->user()->organisation->users;
+
+        // Check if the authenticated user can view this user
+        $this->authorize('view', $user);
+
+        // return view('users.show', compact('user'));
+        return Inertia::render('User/UserEdit', [
+            'user' => $user,
+        ]);
     }
 
     /**
@@ -70,9 +78,9 @@ class UserController extends Controller
     private function getUsers()
     {
         if (\Auth::user()->hasRole('super')) {
-            return User::with('status', 'organisation')->get()->toArray();
+            return User::with('status', 'organisation', 'roles')->get()->toArray();
         } else {
-            return User::with('status', 'organisation')
+            return User::with('status', 'organisation', 'roles')
                 ->where('organisation_id', \Auth::user()->organisation_id)
                 ->get()
                 ->toArray();

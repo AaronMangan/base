@@ -5,7 +5,6 @@ import {
   ChevronDoubleRightIcon,
   Cog6ToothIcon,
   UserGroupIcon,
-  FingerPrintIcon,
   WrenchScrewdriverIcon,
   ArrowLeftStartOnRectangleIcon
 } from '@heroicons/react/24/outline';
@@ -27,11 +26,6 @@ const menuItems = [
         name: 'Users',
         icon: <UserGroupIcon className="w-5 h-5" />,
         path: '/users',
-      },
-      {
-        name: 'Roles',
-        icon: <FingerPrintIcon className="w-5 h-5" />,
-        path: '/roles',
       },
       {
         name: 'Config',
@@ -93,7 +87,7 @@ const Sidebar = () => {
   useEffect(() => {}, []);
 
   return (
-    <div className={`fixed h-full ${collapsed ? 'w-15' : 'w-64'} bg-gray-800 text-white transition-all duration-300`}>
+    <div className={`fixed h-full ${collapsed ? 'w-15' : 'w-64 z-20'} bg-gray-800 text-white transition-all duration-300`}>
       <div className="flex items-center px-2 py-2 pr-2 space-x-4 hover:bg-gray-700">
         { !collapsed && 
           <img
