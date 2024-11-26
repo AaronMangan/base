@@ -12,8 +12,9 @@ return new class () extends Migration {
     {
         Schema::create('statuses', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->string('description');
+            $table->string('name', 255);
+            $table->string('description', 255);
+            $table->string('type', 255);
             $table->unsignedBigInteger('organisation_id')->nullable();
             $table->foreign('organisation_id')->references('id')->on('organisations');
             $table->timestamps();

@@ -10,6 +10,7 @@ use Database\Seeders\StatusSeeder;
 use App\Models\Status;
 use Spatie\Permission\Models\Role;
 use Spatie\Permission\Models\Permission;
+use Exception;
 
 class DatabaseSeeder extends Seeder
 {
@@ -18,17 +19,23 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        $org = Organisation::create([
-            'name' => 'Development',
-            'address' => '1 Flow Street, Flowville',
-            'phone' => '0500000000',
+        if (!$this->environmentCredentials()) {
+            throw new \Exception('Please check your .env file has the right credentials, or remove this seeder');
+        }
+
+        // Super Admin Organisation
+        $superOrg = Organisation::create([
+            'name' => env('ADMIN_ORG_NAME'),
+            'address' => env('ADMIN_ADDRESS', null),
+            'phone' => env('ADMIN_PHONE', null),
             'settings' => json_encode([])
         ]);
 
-        $orgTwo = Organisation::create([
-            'name' => 'Testing',
-            'address' => '2 Flow Street, Flowville',
-            'phone' => '0500000000',
+        // Regular Organisation
+        $adminOrg = Organisation::create([
+            'name' => env('USER_ORG_NAME'),
+            'address' => env('USER_ADDRESS', null),
+            'phone' => env('USER_PHONE', null),
             'settings' => json_encode([])
         ]);
 
@@ -37,6 +44,7 @@ class DatabaseSeeder extends Seeder
             StatusSeeder::class,
         ]);
 
+        // Set the created models to the active status.
         $activeStatus = Status::where('name', 'active')->first();
 
         // Create a Super role
@@ -44,29 +52,46 @@ class DatabaseSeeder extends Seeder
         $permissionSuper = Permission::create(['name' => 'full permissions']);
         $roleSuper->givePermissionTo($permissionSuper);
 
-        // Finally, create a user.
-        $user = User::create([
-            'name' => 'Aaron Mangan',
-            'email' => 'azza.mangan@gmail.com',
-            'password' => 'azza.mangan@gmail.com',
-            'organisation_id' => $org->id,
+        // Create a super admin user.
+        $adminUser = User::create([
+            'name' => env('ADMIN_NAME'),
+            'email' => env('ADMIN_NAME'),
+            'password' => env('ADMIN_PASSWORD'),
+            'organisation_id' => $superOrg->id,
             'status_id' => $activeStatus->id ?? null,
         ]);
+        // Assign that user the role.
+        $adminUser->assignRole($roleSuper);
 
-        $user->assignRole($roleSuper);
-
+        // Create an admin org and permissions
         $roleAdmin = Role::create(['name' => 'admin']);
         $permissionAdmin = Permission::create(['name' => 'admin']);
         $roleAdmin->givePermissionTo($permissionAdmin);
 
-        $tester = User::create([
+        // Create an admin user.
+        $adminUser = User::create([
             'name' => 'Jasper Hurst-Mangan',
             'email' => 'j.hurst-mangan@localhost.test',
             'password' => 'j.hurst-mangan@localhost.test',
-            'organisation_id' => $orgTwo->id,
+            'organisation_id' => $adminOrg->id,
             'status_id' => $activeStatus->id ?? null,
         ]);
 
-        $tester->assignRole($roleAdmin);
+        // Assign the role to that user.
+        $adminUser->assignRole($roleAdmin);
+    }
+
+    private function environmentCredentials(): ?bool
+    {
+        $data = [
+            env('ADMIN_ORG_NAME', false),
+            env('ADMIN_NAME', false),
+            env('ADMIN_PASSWORD', false),
+            env('USER_ORG_NAME', false),
+            env('USER_NAME', false),
+            env('USER_PASSWORD', false),
+        ];
+
+        return (in_array(false, $data)) ? false : true;
     }
 }
