@@ -28,7 +28,6 @@ class UserPolicy
         if ($user->hasRole('super')) {
             return true;
         }
-
         // Otherwise, check if the users belong to the same company
         return $user->organisation_id === $model->organisation_id;
     }

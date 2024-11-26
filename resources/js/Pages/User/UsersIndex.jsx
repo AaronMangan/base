@@ -10,12 +10,13 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
-import { useRef, useState } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useForm } from '@inertiajs/react';
 
-export default function UserIndex({ users }) {
+export default function UserIndex({ auth, users }) {
     const [editUser, setEditUser] = useState(false);
     const [activeUser, setActiveUser] = useState({});
+    const [isDisabled, setIsDisabled] = useState(false);
 
     /**
      * Return the type based on role.
@@ -98,7 +99,7 @@ export default function UserIndex({ users }) {
             cell: (row) => {
                 return (
                     <>
-                        <PrimaryButton className="mr-1" onClick={() => {
+                        <PrimaryButton disabled={isDisabled} className="mr-1" onClick={() => {
                             // Set the data.
                             setActiveUser(row);
                             setData({
@@ -113,6 +114,12 @@ export default function UserIndex({ users }) {
             },
         }
     ];
+
+    useEffect(() => {
+        // 
+        const roles = auth.user.roles?.map(r => {return r.name});
+        setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true)
+    }, [auth]);
 
     return (
         <AuthenticatedLayout>
