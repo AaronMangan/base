@@ -10,6 +10,8 @@ use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\LogsActivity;
+use App\Flow\Flow;
 
 class User extends Authenticatable implements JWTSubject
 {
@@ -18,6 +20,7 @@ class User extends Authenticatable implements JWTSubject
     use Notifiable;
     use HasRoles;
     use SoftDeletes;
+    use LogsActivity;
 
     /**
      * The attributes that are mass assignable.
@@ -69,6 +72,15 @@ class User extends Authenticatable implements JWTSubject
         return $this->belongsToMany(Role::class);
     }
 
+    public function history(): array
+    {
+        return Flow::historyOf(self::class, $this->id);
+    }
+
+    public function isSuper(): bool
+    {
+        return $this->hasRole('super') ? true : false;
+    }
 
     /**
      * Return the JWT Identifier

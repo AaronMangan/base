@@ -10,8 +10,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
-import { useRef, useState, useEffect } from 'react';
-import { Inertia } from '@inertiajs/inertia';
+import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
 
@@ -91,30 +90,36 @@ export default function UserIndex({ auth, users }) {
         {
             name: '#',
             selector: row => row.id,
+            width: '5pc'
         },
         {
             name: 'Name',
             selector: row => row.name,
+            width: '15pc'
         },
         {
             name: 'Email',
-            selector: row => row.email
+            selector: row => row.email,
+            width: '15pc'
         },
         {
             name: 'Organisation',
-            selector: row => row.organisation.name || 'Unknown'
+            selector: row => row.organisation.name || 'Unknown',
+            width: '15pc'
         },
         {
             name: 'Role',
             cell: (data) => {
                 return <Sticker type={getType(data.roles[0].name)} value={data.roles[0].name}></Sticker>
             },
+            width: '8pc'
         },
         {
             name: 'Status',
             cell: (data) => {
                 return <Badge value={data.status.name.toUpperCase() || 'N/A'}></Badge>
-            }
+            },
+            width: '8pc'
         },
         {
             name: 'Actions',
