@@ -88,9 +88,28 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, User $user)
     {
-        //
+        // Make sure the user can update the model.
+        if ($request->user()->cannot('delete', $user)) {
+            abort(403);
+        }
+
+        // Delete the user.
+        $deleted = $user->delete();
+
+        // Return response
+        // return to_route('user.index')->with('success', 'Deleted successfully');
+        // return Inertia::render('User/UsersIndex', [
+        //     'users' => $this->getUsers()
+        // ]);
+        // return response()->json(['status' => 'success', 'user' => $user]);
+        // return redirect()->route('user.index')
+        //     ->with(
+        //         $deleted ? 'success' : 'fail',
+        //         $deleted ? 'User updated successfully.' : 'An error occurred saving the user'
+        //     );
+
     }
 
     private function getUsers()

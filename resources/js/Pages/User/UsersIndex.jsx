@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import DataTable from 'react-data-table-component';
 import DangerButton from '@/Components/DangerButton';
 import Badge from '@/Components/Badge';
@@ -11,8 +11,10 @@ import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useRef, useState, useEffect } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
 import { toast } from 'react-toastify';
+import axios from 'axios';
+
 export default function UserIndex({ auth, users }) {
     const [editUser, setEditUser] = useState(false);
     const [activeUser, setActiveUser] = useState({});
@@ -34,8 +36,34 @@ export default function UserIndex({ auth, users }) {
         }
     };
 
-    const deleteUser = (user) => {
-        // axios.delete()
+    /**
+     * Delete the user.
+     * Only admin's and super admins can perform this action.
+     * @param {*} user 
+     */
+    const handleDeleteUser = (user) => {
+        // Use Inertia to send the delete request.
+        // Inertia.delete(route('user.destroy', user.id), {
+        //   onSuccess: (response) => {
+        //     toast.success('User deleted successfully!');
+        //   },
+        //   onError: (error) => {
+        //     toast.error('Failed to delete user');
+        //   }
+        // });
+        // axios.delete(route('user.destroy', user.id));
+        Inertia.delete(`/user/${user.id}/delete`, {
+            onSuccess: () => {
+              toast.success('User deleted successfully!');
+            },
+            onError: () => {
+              toast.error('Error deleting user');
+            },
+        });
+        // Inertia.get(route('user.index'), {
+        //     users: users.filter(x => x.id != user.id)
+        // });
+        
     };
 
     const {
@@ -50,7 +78,7 @@ export default function UserIndex({ auth, users }) {
         name: activeUser.name || '',
         email: activeUser.email || '',
     });
-
+    
     const postUser = (e) => {
         e.preventDefault();
         post(route('user.edit', activeUser.id), {
@@ -66,7 +94,6 @@ export default function UserIndex({ auth, users }) {
 
     const closeModal = () => {
         setEditUser(false);
-
         clearErrors();
         reset();
     };
@@ -117,7 +144,7 @@ export default function UserIndex({ auth, users }) {
                             })
                             setEditUser(true);
                         }}>Edit</PrimaryButton>
-                        <DangerButton onClick={() => {deleteUser(row)}}>Delete</DangerButton>
+                        <DangerButton onClick={() => {handleDeleteUser(activeUser)}}>Delete</DangerButton>
                     </>
                 )
             },
@@ -130,7 +157,7 @@ export default function UserIndex({ auth, users }) {
     useEffect(() => {
         // 
         const roles = auth.user.roles?.map(r => {return r.name});
-        setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true)
+        setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true);
     }, [auth]);
 
     return (

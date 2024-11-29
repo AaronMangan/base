@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -31,6 +32,15 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->middleware(['role:super|admin|user'])->name('user.index');
     Route::post('/user/{user}/edit', [UserController::class, 'update'])->middleware(['role:super|admin'])->name('user.edit');
+    Route::delete('/user/{user}/delete', [UserController::class, 'destroy'])->middleware(['role:super|admin'])->name('user.destroy');
+});
+
+/**
+ * Config Routes
+ */
+Route::middleware(['role:super|admin', 'auth'])->group(function () {
+    Route::get('/config', [ConfigController::class, 'index'])->middleware(['role:super|admin'])->name('config.index');
+    Route::post('/config', [ConfigController::class, 'store'])->middleware(['role:super|admin'])->name('config.store');
 });
 
 require __DIR__.'/auth.php';

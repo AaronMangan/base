@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Link, usePage } from '@inertiajs/react';
 import Sidebar from '@/Components/Nav/Sidebar';
 import { ToastContainer, toast } from 'react-toastify';
@@ -5,7 +6,20 @@ import 'react-toastify/dist/ReactToastify.css';
 
 export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
-    // const [showingNavigationDropdown, setShowingNavigationDropdown] = useState(false);
+    const success = usePage().props.success || null;
+    useEffect(() => {
+        if(success) {
+            toast.success(success);
+        }
+
+    //     if(usePage().props.warning) {
+    //         toast.success(usePage().props.warning);
+    //     }
+
+    //     if(usePage().props.error) {
+    //         toast.success(usePage().props.error);
+    //     }
+    });
     return (<div className={`flex min-h-screen bg-gray-100 w-full min-w-screen dark:bg-gray-900 transition-all`}>
             {/* Sidebar */}
             <Sidebar

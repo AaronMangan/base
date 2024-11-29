@@ -34,7 +34,7 @@ const menuItems = [
       {
         name: 'Config',
         icon: <WrenchScrewdriverIcon className="w-7 h-7" />,
-        path: '/settings',
+        path: '/config',
       },
     ]
   }
@@ -46,7 +46,7 @@ const menuItems = [
  * @returns object
  */
 const Sidebar = ({ user }) => {
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(true);
   const [openItem, setOpenItem] = useState(null);
 
   const toggleSubMenu = (index) => {
@@ -54,7 +54,9 @@ const Sidebar = ({ user }) => {
   };
   
   // Toggle the collapsed state
-  const toggleSidebar = () => setCollapsed(!collapsed);
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed)
+  };
 
   // Navigate to the profile page when clicked.
   const goToPath = (path) => {
@@ -99,18 +101,18 @@ const Sidebar = ({ user }) => {
 
   return (
     <div className={`flex-col fixed h-full ${collapsed ? 'w-15' : 'w-[300px] z-20'} bg-gray-800 text-white transition-all duration-300`}>
-      <div className="flex items-center justify-center w-full h-12 px-1 py-2 pr-2 mt-2 space-x-4 hover:bg-gray-700">
+      <div className="flex items-center justify-center w-full px-1 py-2 pr-2 mt-2 space-x-4 h-15 hover:bg-gray-700">
         { !collapsed && 
           <img
-            src={'https://via.placeholder.com/50?text=' + user?.name?.[0]}  // Assuming `user.profileImage` is the URL of the user's image
-            alt="User Profile"
-            className="w-10 h-10 my-3 border-0 border-gray-300 rounded-full cursor-pointer align-items-center"
+            src={user?.profile_image || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp'} // Gravatar default image
+            alt={user?.name}
+            className="object-cover w-10 h-10 rounded-full"
             onClick={() => {goToPath('/profile')}}
           />
         }
         {!collapsed && <span className="w-full text-lg font-thin text-white">{user?.name}</span>}
         
-        <button onClick={toggleSidebar} className="text-white focus:outline-none">{!collapsed && <XMarkIcon className="w-7 h-7"/> || <ChevronDoubleRightIcon className="w-7 h-7"/>}</button>
+        <button onClick={toggleSidebar} className="text-white focus:outline-none">{!collapsed && <XMarkIcon className="w-7 h-7"/> || <ChevronDoubleRightIcon className="pl-1 w-7 h-7"/>}</button>
       </div>
       <nav className="mt-6">
         <ul>
