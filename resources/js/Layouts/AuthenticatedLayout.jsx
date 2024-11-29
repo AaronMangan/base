@@ -8,19 +8,10 @@ export default function AuthenticatedLayout({ header, children }) {
     const user = usePage().props.auth.user;
     const success = usePage().props.success || null;
     useEffect(() => {
-        if(success) {
-            toast.success(success);
-        }
-
-    //     if(usePage().props.warning) {
-    //         toast.success(usePage().props.warning);
-    //     }
-
-    //     if(usePage().props.error) {
-    //         toast.success(usePage().props.error);
-    //     }
-    });
-    return (<div className={`flex min-h-screen bg-gray-100 w-full min-w-screen dark:bg-gray-900 transition-all`}>
+        // 
+    }, []);
+    return (
+        <div className={`flex min-h-screen bg-gray-100 w-full min-w-screen dark:bg-gray-900 transition-all`}>
             {/* Sidebar */}
             <Sidebar
                 className={`transition-all flex-col`}
