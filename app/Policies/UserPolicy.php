@@ -12,7 +12,7 @@ class UserPolicy
      */
     public function viewAny(User $user): bool
     {
-        //
+        return $user->hasRole('super') ?? false;
     }
 
     /**
@@ -63,7 +63,13 @@ class UserPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        //
+        // Super role can delete any user.
+        if ($user->hasRole('super')) {
+            return true;
+        }
+
+        // Otherwise the user must have an admin role and the model being deleted must be from the users organisation.
+        return $user->hasRole('admin') && $user->organisation_id === $model->organisation_id;
     }
 
     /**

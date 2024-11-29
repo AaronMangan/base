@@ -6,38 +6,47 @@ import {
   Cog6ToothIcon,
   UserGroupIcon,
   WrenchScrewdriverIcon,
-  ArrowLeftStartOnRectangleIcon
+  ArrowLeftStartOnRectangleIcon,
+  XMarkIcon
 } from '@heroicons/react/24/outline';
 import axios from 'axios';
 
+/**
+ * Menu Items.
+ */
 const menuItems = [
   {
     name: 'Home',
-    icon: <HomeIcon className="w-5 h-5" />,
+    icon: <HomeIcon className="w-7 h-7" />,
     path: '/dashboard',
     children: []
   },
   {
     name: 'Manage',
-    icon: <Cog6ToothIcon className="w-5 h-5" />,
+    icon: <Cog6ToothIcon className="w-7 h-7" />,
     path: '',
     children: [
       {
         name: 'Users',
-        icon: <UserGroupIcon className="w-5 h-5" />,
+        icon: <UserGroupIcon className="w-7 h-7" />,
         path: '/users',
       },
       {
         name: 'Config',
-        icon: <WrenchScrewdriverIcon className="w-5 h-5" />,
-        path: '/settings',
+        icon: <WrenchScrewdriverIcon className="w-7 h-7" />,
+        path: '/config',
       },
     ]
   }
 ];
 
-const Sidebar = () => {
-  const [collapsed, setCollapsed] = useState(false);
+/**
+ * Define the sidebar used for navigation.
+ * @param {*} user The user that is currently authenticated 
+ * @returns object
+ */
+const Sidebar = ({ user }) => {
+  const [collapsed, setCollapsed] = useState(true);
   const [openItem, setOpenItem] = useState(null);
 
   const toggleSubMenu = (index) => {
@@ -45,7 +54,9 @@ const Sidebar = () => {
   };
   
   // Toggle the collapsed state
-  const toggleSidebar = () => setCollapsed(!collapsed);
+  const toggleSidebar = () => {
+    setCollapsed(!collapsed)
+  };
 
   // Navigate to the profile page when clicked.
   const goToPath = (path) => {
@@ -59,7 +70,7 @@ const Sidebar = () => {
     })
     .then(function (response) {
       // Handle successful logout response
-      window.location.href = '/';   // Redirect to the homepage or login page
+      window.location.href = '/login';   // Redirect to the homepage or login page
     })
     .catch(function (error) {
       // Handle any errors
@@ -84,22 +95,24 @@ const Sidebar = () => {
     }
   };
 
-  useEffect(() => {}, []);
+  useEffect(() => {
+    // 
+  }, []);
 
   return (
-    <div className={`fixed h-full ${collapsed ? 'w-15' : 'w-64 z-20'} bg-gray-800 text-white transition-all duration-300`}>
-      <div className="flex items-center px-2 py-2 pr-2 space-x-4 hover:bg-gray-700">
+    <div className={`flex-col fixed h-full ${collapsed ? 'w-15' : 'w-[300px] z-20'} bg-gray-800 text-white transition-all duration-300`}>
+      <div className="flex items-center justify-center w-full px-1 py-2 pr-2 mt-2 space-x-4 h-15 hover:bg-gray-700">
         { !collapsed && 
           <img
-            src='https://via.placeholder.com/40?text=TU'  // Assuming `user.profileImage` is the URL of the user's image
-            alt="User Profile"
-            className="w-10 h-10 border-2 border-gray-300 rounded-full"
+            src={user?.profile_image || 'https://www.gravatar.com/avatar/00000000000000000000000000000000?d=mp'} // Gravatar default image
+            alt={user?.name}
+            className="object-cover w-10 h-10 rounded-full"
             onClick={() => {goToPath('/profile')}}
           />
         }
-        {!collapsed && <span className="w-full font-semibold text-white">Test User</span>}
+        {!collapsed && <span className="w-full text-lg font-bold text-white">{user?.name}</span>}
         
-        <button onClick={toggleSidebar} className="text-white focus:outline-none">{!collapsed && <XCircleIcon className="w-5 h-5"/> || <ChevronDoubleRightIcon className="w-5 h-5"/>}</button>
+        <button onClick={toggleSidebar} className="text-white focus:outline-none">{!collapsed && <XMarkIcon className="w-7 h-7"/> || <ChevronDoubleRightIcon className="pl-1 w-7 h-7"/>}</button>
       </div>
       <nav className="mt-6">
         <ul>
@@ -110,7 +123,7 @@ const Sidebar = () => {
                 className="flex items-center px-2 py-2 space-x-4 hover:bg-gray-700"
                 onClick={() => {handleItemClick(item, index)}}
               >
-                <span className="w-5 h-5">{item.icon}</span>
+                <span className="w-7 h-7">{item.icon}</span>
                 {!collapsed && <span>{item.name}</span>}
               </div>
 
@@ -120,7 +133,7 @@ const Sidebar = () => {
                   {item.children.map((subItem, subIndex) => (
                     <li key={subIndex}>
                       <div onClick={() => {handleItemClick(subItem, subIndex)}} className="flex items-center px-4 py-2 space-x-4 hover:bg-gray-600">
-                        <span className="w-5 h-5">{subItem.icon}</span>
+                        <span className="w-7 h-7">{subItem.icon}</span>
                         {!collapsed && <span>{subItem.name}</span>}
                       </div>
                     </li>
@@ -131,10 +144,10 @@ const Sidebar = () => {
           ))}
             <li key='logout_link'>
               <div
-                className="flex items-center px-2 py-2 space-x-4 hover:bg-gray-700"
+                className="flex items-center px-2 py-2 mt-4 space-x-4 hover:bg-gray-700"
                 onClick={() => {logout()}}
               >
-                <span className="w-5 h-5"><ArrowLeftStartOnRectangleIcon className="w-5 h-5" /></span>
+                <span className="w-7 h-7"><ArrowLeftStartOnRectangleIcon className="w-7 h-7" /></span>
                 {!collapsed && <span>Logout</span>}
               </div>
             </li>

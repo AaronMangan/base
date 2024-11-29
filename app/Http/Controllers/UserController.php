@@ -88,9 +88,16 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function destroy(Request $request, User $user)
     {
-        //
+        // Make sure the user can update the model.
+        if ($request->user()->cannot('delete', $user)) {
+            abort(403);
+        }
+
+        // Delete the user.
+        $deleted = $user->delete();
+        return response()->json(['status' => 'success', 'user' => $user]);
     }
 
     private function getUsers()

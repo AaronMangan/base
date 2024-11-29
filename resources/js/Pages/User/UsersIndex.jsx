@@ -1,6 +1,6 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import PrimaryButton from '@/Components/PrimaryButton';
-import { Head } from '@inertiajs/react';
+import { Head, useForm } from '@inertiajs/react';
 import DataTable from 'react-data-table-component';
 import DangerButton from '@/Components/DangerButton';
 import Badge from '@/Components/Badge';
@@ -11,12 +11,15 @@ import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
 import { useRef, useState, useEffect } from 'react';
-import { useForm } from '@inertiajs/react';
+import { Inertia } from '@inertiajs/inertia';
+import { toast } from 'react-toastify';
+import axios from 'axios';
 
 export default function UserIndex({ auth, users }) {
     const [editUser, setEditUser] = useState(false);
     const [activeUser, setActiveUser] = useState({});
     const [isDisabled, setIsDisabled] = useState(false);
+    const [userList, setUserList] = useState({});
 
     /**
      * Return the type based on role.
@@ -25,11 +28,28 @@ export default function UserIndex({ auth, users }) {
      */
     const getType = (type) => {
         switch (type) {
+            case 'super':
+                return 'danger';
             case 'admin':
                 return 'success';
             default:
                 return 'primary';
         }
+    };
+
+    /**
+     * Delete the user.
+     * Only admin's and super admins can perform this action.
+     * @param {*} user 
+     */
+    const handleDeleteUser = (user) => {
+        axios.delete(route('user.destroy', user.id)).then(resp => {
+            if(resp.data.status == 'success') {
+                setUserList(users.filter(x => x.id != user.id));
+            }
+        }).then(() => {
+            toast.success('User deleted successfully')
+        })
     };
 
     const {
@@ -44,12 +64,15 @@ export default function UserIndex({ auth, users }) {
         name: activeUser.name || '',
         email: activeUser.email || '',
     });
-
+    
     const postUser = (e) => {
         e.preventDefault();
         post(route('user.edit', activeUser.id), {
             preserveScroll: true,
-            onSuccess: () => closeModal(),
+            onSuccess: () => {
+                toast.success("User was saved successfully!");
+                closeModal();
+            },
             onError: () => null,
             onFinish: () => reset(),
         });
@@ -57,7 +80,6 @@ export default function UserIndex({ auth, users }) {
 
     const closeModal = () => {
         setEditUser(false);
-
         clearErrors();
         reset();
     };
@@ -101,25 +123,29 @@ export default function UserIndex({ auth, users }) {
                     <>
                         <PrimaryButton disabled={isDisabled} className="mr-1" onClick={() => {
                             // Set the data.
-                            setActiveUser(row);
                             setData({
                                 name: row.name || '',
                                 email: row.email || ''
                             })
                             setEditUser(true);
+                            setActiveUser(row);
                         }}>Edit</PrimaryButton>
-                        <DangerButton onClick={() => {alert('To Do - Implement Delete')}}>Delete</DangerButton>
+                        <DangerButton onClick={() => {handleDeleteUser(row)}}>Delete</DangerButton>
                     </>
                 )
             },
         }
     ];
 
+    /**
+     * Runs when the component is mounted and when the dependencies listed change.
+     */
     useEffect(() => {
         // 
         const roles = auth.user.roles?.map(r => {return r.name});
-        setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true)
-    }, [auth]);
+        setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true);
+        setUserList(users);
+    }, [auth, users]);
 
     return (
         <AuthenticatedLayout>
@@ -131,7 +157,7 @@ export default function UserIndex({ auth, users }) {
                             <div className="z-0 p-2 text-gray-900 dark:text-gray-100">
                                 <DataTable
                                     columns={columns}
-                                    data={users}
+                                    data={userList}
                                     className='z-0'
                                 />
                             </div>
@@ -196,14 +222,17 @@ export default function UserIndex({ auth, users }) {
                         />}
                     </div>
 
+                    {/* Buttons to handle saving or cancelling */}
                     <div className="flex justify-end mt-6">
+                        {/* Save the changes to the user */}
+                        <PrimaryButton className="mr-2" disabled={processing}>
+                            Save
+                        </PrimaryButton>
+                        
+                        {/* Cancel */}
                         <SecondaryButton onClick={closeModal}>
                             Cancel
                         </SecondaryButton>
-
-                        <PrimaryButton className="ms-3" disabled={processing}>
-                            Save
-                        </PrimaryButton>
                     </div>
                 </form>
             </Modal>
