@@ -94,7 +94,10 @@ class UserController extends Controller
         if ($request->user()->cannot('delete', $user)) {
             abort(403);
         }
-
+        // return Inertia::render('Users/UserIndex', [
+        //     'users' => $this->getUsers()
+        // ]);
+        // return redirect()->route('user.index');
         // Delete the user.
         $deleted = $user->delete();
 
@@ -103,7 +106,7 @@ class UserController extends Controller
         // return Inertia::render('User/UsersIndex', [
         //     'users' => $this->getUsers()
         // ]);
-        // return response()->json(['status' => 'success', 'user' => $user]);
+        return response()->json(['status' => 'success', 'user' => $user]);
         // return redirect()->route('user.index')
         //     ->with(
         //         $deleted ? 'success' : 'fail',

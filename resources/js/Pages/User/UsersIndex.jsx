@@ -19,6 +19,7 @@ export default function UserIndex({ auth, users }) {
     const [editUser, setEditUser] = useState(false);
     const [activeUser, setActiveUser] = useState({});
     const [isDisabled, setIsDisabled] = useState(false);
+    const [userList, setUserList] = useState({});
 
     /**
      * Return the type based on role.
@@ -42,28 +43,13 @@ export default function UserIndex({ auth, users }) {
      * @param {*} user 
      */
     const handleDeleteUser = (user) => {
-        // Use Inertia to send the delete request.
-        // Inertia.delete(route('user.destroy', user.id), {
-        //   onSuccess: (response) => {
-        //     toast.success('User deleted successfully!');
-        //   },
-        //   onError: (error) => {
-        //     toast.error('Failed to delete user');
-        //   }
-        // });
-        // axios.delete(route('user.destroy', user.id));
-        Inertia.delete(`/user/${user.id}/delete`, {
-            onSuccess: () => {
-              toast.success('User deleted successfully!');
-            },
-            onError: () => {
-              toast.error('Error deleting user');
-            },
-        });
-        // Inertia.get(route('user.index'), {
-        //     users: users.filter(x => x.id != user.id)
-        // });
-        
+        axios.delete(route('user.destroy', user.id)).then(resp => {
+            if(resp.data.status == 'success') {
+                setUserList(users.filter(x => x.id != user.id));
+            }
+        }).then(() => {
+            toast.success('User deleted successfully')
+        })
     };
 
     const {
@@ -137,14 +123,14 @@ export default function UserIndex({ auth, users }) {
                     <>
                         <PrimaryButton disabled={isDisabled} className="mr-1" onClick={() => {
                             // Set the data.
-                            setActiveUser(row);
                             setData({
                                 name: row.name || '',
                                 email: row.email || ''
                             })
                             setEditUser(true);
+                            setActiveUser(row);
                         }}>Edit</PrimaryButton>
-                        <DangerButton onClick={() => {handleDeleteUser(activeUser)}}>Delete</DangerButton>
+                        <DangerButton onClick={() => {handleDeleteUser(row)}}>Delete</DangerButton>
                     </>
                 )
             },
@@ -158,7 +144,8 @@ export default function UserIndex({ auth, users }) {
         // 
         const roles = auth.user.roles?.map(r => {return r.name});
         setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true);
-    }, [auth]);
+        setUserList(users);
+    }, [auth, users]);
 
     return (
         <AuthenticatedLayout>
@@ -170,7 +157,7 @@ export default function UserIndex({ auth, users }) {
                             <div className="z-0 p-2 text-gray-900 dark:text-gray-100">
                                 <DataTable
                                     columns={columns}
-                                    data={users}
+                                    data={userList}
                                     className='z-0'
                                 />
                             </div>

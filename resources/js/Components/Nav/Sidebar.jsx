@@ -110,7 +110,7 @@ const Sidebar = ({ user }) => {
             onClick={() => {goToPath('/profile')}}
           />
         }
-        {!collapsed && <span className="w-full text-lg font-thin text-white">{user?.name}</span>}
+        {!collapsed && <span className="w-full text-lg font-bold text-white">{user?.name}</span>}
         
         <button onClick={toggleSidebar} className="text-white focus:outline-none">{!collapsed && <XMarkIcon className="w-7 h-7"/> || <ChevronDoubleRightIcon className="pl-1 w-7 h-7"/>}</button>
       </div>
