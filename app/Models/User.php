@@ -3,17 +3,18 @@
 namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
-use Tymon\JWTAuth\Contracts\JWTSubject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Spatie\Permission\Traits\HasRoles;
 use Spatie\Permission\Models\Role;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 use App\Traits\LogsActivity;
 use App\Flow\Flow;
 
-class User extends Authenticatable implements JWTSubject
+class User extends Authenticatable
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory;
@@ -21,6 +22,7 @@ class User extends Authenticatable implements JWTSubject
     use HasRoles;
     use SoftDeletes;
     use LogsActivity;
+    use HasApiTokens;
 
     /**
      * The attributes that are mass assignable.
@@ -31,7 +33,8 @@ class User extends Authenticatable implements JWTSubject
         'name',
         'email',
         'password',
-        'organisation_id'
+        'organisation_id',
+        'status_id'
     ];
 
     /**
@@ -43,6 +46,8 @@ class User extends Authenticatable implements JWTSubject
         'password',
         'remember_token',
     ];
+
+    protected $append = ['token'];
 
     /**
      * Get the attributes that should be cast.
@@ -80,6 +85,14 @@ class User extends Authenticatable implements JWTSubject
     public function isSuper(): bool
     {
         return $this->hasRole('super') ? true : false;
+    }
+
+    public function getTokenAttribute(): Attribute
+    {
+        // return JWTAuth::fromUser($this);
+        return new Attribute(
+            get: fn () => 'yes',
+        );
     }
 
     /**

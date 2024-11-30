@@ -20,6 +20,6 @@ class Status extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'organisation_id'
+        'name', 'description', 'organisation_id', 'type'
     ];
 }

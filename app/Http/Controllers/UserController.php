@@ -74,7 +74,7 @@ class UserController extends Controller
         }
 
         // Get the data for the user.
-        $data = $request->safe()->only(['name', 'email']);
+        $data = $request->safe()->only(['name', 'email', 'status_id']);
         $updated = $user->update($data);
 
         // Redirect back to the user index page or show page
@@ -100,6 +100,11 @@ class UserController extends Controller
         return response()->json(['status' => 'success', 'user' => $user]);
     }
 
+    /**
+     * Returns a listing of all users.
+     *
+     * @return void
+     */
     private function getUsers()
     {
         if (\Auth::user()->hasRole('super')) {

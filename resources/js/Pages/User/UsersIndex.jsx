@@ -10,6 +10,7 @@ import InputLabel from '@/Components/InputLabel';
 import TextInput from '@/Components/TextInput';
 import InputError from '@/Components/InputError';
 import SecondaryButton from '@/Components/SecondaryButton';
+import Select from 'react-select';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
@@ -19,6 +20,17 @@ export default function UserIndex({ auth, users }) {
     const [activeUser, setActiveUser] = useState({});
     const [isDisabled, setIsDisabled] = useState(false);
     const [userList, setUserList] = useState({});
+    const [statuses, setStatuses] = useState({});
+
+    const getStatusList = () => {
+        axios.get('/api/statuses').then(response => {
+            if(response?.data?.status == 'success') {
+                setStatuses(response?.data?.data?.map(status => {
+                    return {value: status.id, label: status.name.toUpperCase()}
+                }));
+            }
+        })
+    }
 
     /**
      * Return the type based on role.
@@ -62,6 +74,7 @@ export default function UserIndex({ auth, users }) {
     } = useForm({
         name: activeUser.name || '',
         email: activeUser.email || '',
+        status_id: 1,
     });
     
     const postUser = (e) => {
@@ -126,15 +139,17 @@ export default function UserIndex({ auth, users }) {
             cell: (row) => {
                 return (
                     <>
-                        <PrimaryButton disabled={isDisabled} className="mr-1" onClick={() => {
+                        <PrimaryButton disabled={isDisabled} className="" onClick={() => {
                             // Set the data.
                             setData({
                                 name: row.name || '',
-                                email: row.email || ''
+                                email: row.email || '',
+                                status_id: row.status_id || 1
                             })
                             setEditUser(true);
                             setActiveUser(row);
                         }}>Edit</PrimaryButton>
+                        <SecondaryButton className='mx-2'>History</SecondaryButton>
                         <DangerButton onClick={() => {handleDeleteUser(row)}}>Delete</DangerButton>
                     </>
                 )
@@ -146,9 +161,9 @@ export default function UserIndex({ auth, users }) {
      * Runs when the component is mounted and when the dependencies listed change.
      */
     useEffect(() => {
-        // 
         const roles = auth.user.roles?.map(r => {return r.name});
         setIsDisabled(roles.includes('super') || roles.includes('admin') ? false : true);
+        getStatusList();
         setUserList(users);
     }, [auth, users]);
 
@@ -206,20 +221,45 @@ export default function UserIndex({ auth, users }) {
                     <div className="mt-6">
                         <InputLabel
                             htmlFor="email"
-                            value="e-mail"
+                            value="Email"
                             className=""
                         />
                         <TextInput
-                            id="name"
+                            id="email"
                             type="text"
-                            name="name"
+                            name="email"
                             value={data.email}
                             onChange={(e) =>
                                 setData('email', e.target.value)
                             }
                             className="block w-full mt-1"
                             isFocused
-                            placeholder="User name"
+                            placeholder="User Email"
+                        />
+                        {errors && errors.email && <InputError
+                            message={errors.email}
+                            className="mt-2"
+                        />}
+                    </div>
+
+                    {/* User Status */}
+                    <div className="mt-6">
+                        <InputLabel
+                            htmlFor="status"
+                            value="Status"
+                            className=""
+                        />
+                        <Select
+                            options={statuses}
+                            onChange={(e) => {
+                                setData('status_id', e.value)
+                            }}
+                            placeholder='Please select a status'
+                            menuPlacement='top'
+                            defaultValue={() => {
+                                return statuses.find(x => x.value == data.status_id)
+                            }}
+                            className='border-gray-300 rounded-md shadow-sm focus:border-indigo-500 focus:ring-indigo-500 dark:border-gray-700 dark:bg-gray-900 dark:text-gray-300 dark:focus:border-indigo-600 dark:focus:ring-indigo-600'
                         />
                         {errors && errors.email && <InputError
                             message={errors.email}
