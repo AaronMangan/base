@@ -24,4 +24,25 @@ Route::middleware(['auth:sanctum'])->group(function () {
             'data' => \App\Models\Status::all()
         ], 200);
     });
+
+    // Filter Data API.
+    Route::get('/filters/models', function (Request $request) {
+        $modelNames = \App\Models\ActivityLog::where('organisation_id', $request->user()->organisation_id)
+            ->pluck('model_name')
+            ->unique()
+            ->toArray();
+        $data = [];
+        foreach ($modelNames as $model) {
+            $name = str_replace('App\\Models\\', '', $model);
+            $data[] = [
+                'value' => strtolower($name),
+                'label' => $name,
+            ];
+        }
+        $data[0]['default'] = true;
+        return response()->json([
+            'status' => 'success',
+            'data' => $data ?? []
+        ]);
+    });
 });

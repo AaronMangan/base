@@ -33,6 +33,21 @@ export default function UserIndex({ auth, users }) {
     }
 
     /**
+     * Custom Styles for the table headers
+     */
+    const customStyles = {
+        headCells: {
+            style: {
+                fontWeight: 'bold', // Make the header text bold
+                fontSize: '15px',   // Optionally, adjust font size
+                color: '#fff',      // Optionally, change text color
+                backgroundColor: '#1f2937',
+                padding: '1em'
+            }
+        }
+    };
+
+    /**
      * Return the type based on role.
      * @param {*} type 
      * @returns 
@@ -132,7 +147,7 @@ export default function UserIndex({ auth, users }) {
             cell: (data) => {
                 return <Badge value={data.status.name.toUpperCase() || 'N/A'}></Badge>
             },
-            width: '8pc'
+            width: '8pc',
         },
         {
             name: 'Actions',
@@ -174,11 +189,12 @@ export default function UserIndex({ auth, users }) {
                 <div className="py-12">
                     <div className="z-0 mx-auto max-w-[95%] sm:px-6 lg:px-8">
                         <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
-                            <div className="z-0 p-2 text-gray-900 dark:text-gray-100">
+                            <div className="z-0 text-gray-900 dark:text-gray-100">
                                 <DataTable
                                     columns={columns}
                                     data={userList}
                                     className='z-0'
+                                    customStyles={customStyles}
                                 />
                             </div>
                         </div>

@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class ActivityLog extends Model
 {
     protected $fillable = [
-        'model_name', 'model_id', 'data', 'user_id', 'organisation_id'
+        'model_name', 'model_id', 'event', 'data', 'user_id', 'organisation_id'
     ];
 
     /**
@@ -16,8 +16,8 @@ class ActivityLog extends Model
      *
      * @return BelongsTo|null
      */
-    public function user(): ?BelongsTo
+    public function user(): BelongsTo
     {
-        return $this->belongsTo(App\Models\User::class) ?? null;
+        return $this->belongsTo(\App\Models\User::class);
     }
 }

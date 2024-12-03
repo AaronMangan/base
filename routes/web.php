@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ActivityLogController;
 use App\Http\Controllers\ConfigController;
 use App\Http\Controllers\UserController;
 use Illuminate\Foundation\Application;
@@ -43,4 +44,14 @@ Route::middleware(['role:super|admin', 'auth'])->group(function () {
     Route::post('/config', [ConfigController::class, 'store'])->middleware(['role:super|admin'])->name('config.store');
 });
 
+/**
+ * Activity Log Routes
+ */
+Route::middleware(['role:super|admin', 'auth'])->group(function () {
+    Route::get('/activity-log', [ActivityLogController::class, 'index'])->name('activity-log');
+    Route::get('/activity-log/{activity_log}/view', [ActivityLogController::class, 'show'])->name('activity-log.show');
+});
+
+
+// Add auth routes.
 require __DIR__.'/auth.php';

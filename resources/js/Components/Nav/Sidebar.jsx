@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import {
   HomeIcon,
-  XCircleIcon,
+  QueueListIcon,
   ChevronDoubleRightIcon,
   Cog6ToothIcon,
   UserGroupIcon,
@@ -36,6 +36,12 @@ const menuItems = [
         icon: <WrenchScrewdriverIcon className="w-7 h-7" />,
         path: '/config',
       },
+      {
+        name: 'Activity',
+        icon: <QueueListIcon className='w-7 h-7' />,
+        path: '/activity-log',
+        children: []
+      }
     ]
   }
 ];
