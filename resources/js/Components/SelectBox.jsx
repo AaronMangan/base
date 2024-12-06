@@ -1,12 +1,13 @@
 import React from 'react';
 import Select from 'react-select';
 
-export default function SelectBox({ options, defaultValue, onChange, className, placement = 'auto', placeholder = 'Please select' }) {
+export default function SelectBox({ options, defaultValue, selected, onChange, className, placement = 'auto', placeholder = 'Please select' }) {
   return (
     <Select
       options={options}
       onChange={onChange}
       placeholder={placeholder}
+      value={selected}
       menuPlacement={placement}
       defaultValue={defaultValue}
       className={

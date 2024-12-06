@@ -33,6 +33,8 @@ Route::middleware('auth')->group(function () {
 Route::middleware('auth')->group(function () {
     Route::get('/users', [UserController::class, 'index'])->middleware(['role:super|admin|user'])->name('user.index');
     Route::post('/user/{user}/edit', [UserController::class, 'update'])->middleware(['role:super|admin'])->name('user.edit');
+    Route::get('/user/create', [UserController::class, 'create'])->middleware(['role:super|admin'])->name('user.create');
+    Route::post('/user/create', [UserController::class, 'store'])->middleware(['role:super|admin'])->name('users.create');
     Route::delete('/user/{user}/delete', [UserController::class, 'destroy'])->middleware(['role:super|admin'])->name('user.destroy');
 });
 

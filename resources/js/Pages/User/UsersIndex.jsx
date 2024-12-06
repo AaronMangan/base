@@ -138,7 +138,7 @@ export default function UserIndex({ auth, users }) {
         {
             name: 'Role',
             cell: (data) => {
-                return <Sticker type={getType(data.roles[0].name)} value={data.roles[0].name}></Sticker>
+                return <Sticker type={getType(data?.roles[0]?.name || 'User')} value={data?.roles[0]?.name || 'User'}></Sticker>
             },
             width: '8pc'
         },

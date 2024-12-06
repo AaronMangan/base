@@ -46,6 +46,7 @@ trait LogsActivity
             return false;
         }
         $changes = null;
+        $original = $this->toJson();
 
         // Only log the changes if the action is 'updated'
         if ($action === 'updated') {
@@ -57,7 +58,7 @@ trait LogsActivity
             'model_name' => get_class($this),
             'model_id' => $this->id,
             'event' => $action,
-            'data' => $changes ? json_encode($changes) : null,
+            'data' => $changes ? json_encode($changes) : $original ?? null,
             'user_id' => auth()->id(),
             'organisation_id' => auth()->user()->organisation_id
         ]);

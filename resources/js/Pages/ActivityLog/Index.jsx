@@ -39,7 +39,7 @@ export default function Dashboard({ history }) {
     {
       id: 'data',
       name: 'Changes',
-      selector: row => row.data.length > 250 ? row.data.slice(0, 250) + '...' : row.data,
+      selector: row => row?.data?.length > 250 ? row?.data?.slice(0, 250) + '...' : row?.data || 'created',
       width: '40pc'
     },
     {
