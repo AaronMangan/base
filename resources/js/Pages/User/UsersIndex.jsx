@@ -203,7 +203,7 @@ export default function UserIndex({ auth, users }) {
                             </div>
                         </div>
                     </div>
-                    <FloatingButton onClick={() => createNewUser} />
+                    <FloatingButton onClick={(e) => createNewUser()} />
                 </div>
             </>
 
