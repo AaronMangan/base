@@ -14,6 +14,7 @@ import Select from 'react-select';
 import { useState, useEffect } from 'react';
 import { toast } from 'react-toastify';
 import axios from 'axios';
+import FloatingButton from '@/Components/FloatingButton';
 
 export default function UserIndex({ auth, users }) {
     const [editUser, setEditUser] = useState(false);
@@ -182,6 +183,9 @@ export default function UserIndex({ auth, users }) {
         setUserList(users);
     }, [auth, users]);
 
+    const createNewUser = () => {
+        window.location.href = route('user.create')
+    }
     return (
         <AuthenticatedLayout>
             <Head title="Users" />
@@ -199,6 +203,7 @@ export default function UserIndex({ auth, users }) {
                             </div>
                         </div>
                     </div>
+                    <FloatingButton onClick={() => createNewUser} />
                 </div>
             </>
 

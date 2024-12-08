@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Database\Eloquent\Builder;
 use App\Models\ActivityLog;
 use Inertia\Inertia;
 
@@ -15,7 +16,8 @@ class ActivityLogController extends Controller
     {
         //
         return Inertia::render('ActivityLog/Index', [
-            'history' => $this->getHistory(),
+            'history' => $this->getHistory($request->query()),
+            'filters' => $request->query(),
         ]);
     }
 
@@ -39,9 +41,25 @@ class ActivityLogController extends Controller
         ]);
     }
 
-    private function getHistory()
+    private function getHistory($filters)
     {
         $query = ActivityLog::query()->with('user');
+
+        if (!empty($filters)) {
+            array_map(function ($filter, $key) use ($query) {
+                // If the model filter is being used.
+                if ($key == 'model' && $filter != 'all') {
+                    return $query->where('model_name', 'like', '%' . ucwords($filter) . '%');
+                }
+
+                if ($key == 'search' && isset($filter)) {
+                    return $query->where(function (Builder $q) use ($filter) {
+                        $q->where('model_name', 'like', "%{$filter}%")
+                          ->orWhere('data', 'like', "%{$filter}%");
+                    });
+                }
+            }, array_values($filters), array_keys($filters));
+        }
 
         if (!auth()->user()->hasRole('super')) {
             $query->where('organisation_id', auth()->user()->organisation_id);
