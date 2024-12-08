@@ -4,10 +4,12 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use App\Traits\LogsActivity;
 
 class Status extends Model
 {
     use SoftDeletes;
+    use LogsActivity;
 
     /**
      * Deleted Status.
@@ -20,6 +22,6 @@ class Status extends Model
      * @var array
      */
     protected $fillable = [
-        'name', 'description', 'organisation_id'
+        'name', 'description', 'organisation_id', 'type'
     ];
 }

@@ -55,9 +55,10 @@ export default function Config({ config }) {
     const customStyles = {
         headCells: {
           style: {
-            fontWeight: 'bold', // Make the header text bold
-            fontSize: '16px',   // Optionally, adjust font size
-            color: '#333',      // Optionally, change text color
+            fontWeight: 'bold',
+            fontSize: '15px',
+            color: '#fff',
+            background: '#1f2937'
           }
         }
     };
@@ -69,10 +70,7 @@ export default function Config({ config }) {
         {
             name: 'Name',
             width: '25%',
-            selector: row => row.name,
-            style: {
-                fontWeight: 'bold'
-            }
+            selector: row => row.name
         },
         {
             name: 'Values',
@@ -87,18 +85,19 @@ export default function Config({ config }) {
             <>
                 <div className="py-12">
                     <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
+                        <div className="overflow-hidden shadow-sm sm:rounded-lg dark:bg-gray-800">
                             <TableView
                                 data={config}
                                 columns={configColumns}
                                 customStyles={customStyles}
+                                className='rounded-lg'
                             />
                         </div>
                     </div>
                 </div>
 
                 {/* Lets users add a new setting */}
-                <FloatingButton callback={() => {setCreateSetting(true)}} />
+                <FloatingButton className="bg-gray-800" callback={() => {setCreateSetting(true)}} />
             </>
 
             {/* Create a new setting modal */}

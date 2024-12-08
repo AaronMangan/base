@@ -51,3 +51,24 @@ Base includes a pre-defined Status model that can be used and expanded upon. The
 - `Inactive` The object is not active but should not be deleted.
 - `Deleted` The object has been deleted.
 - `Custom`  A custom status to apply to your object.
+
+## Activity Log
+
+Object history is included in base, and allows you to keep track of the changes made to an object.
+By default, this has been enabled in the `User` model but to add it to any other model, simply include the `LogsActivity` trait to the model you want to keep history for.
+
+```php
+use App\Traits\LogsActivity;
+
+// ...
+class MyModel extends Model {
+    use LogsActivity;
+}
+
+```
+
+## API Usage
+
+While base is primarily a web application template, it does include some API capability. This has been designed to allow to make stateless calls to your backend when needed. A good example is the **Status** metadata, which can be useful to apply to different objects in your application. You can check out the `routes/api.php` file to get a better understanding of how this has been setup and what you can do.
+
+It's a good idea to keep authentication in mind if you do need to add stateless Api calls to your applications to prevent data being accessed by users without authorisation.

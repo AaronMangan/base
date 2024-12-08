@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Flow\Flow;
 use Illuminate\Http\Request;
+use App\Http\Requests\StoreUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use Inertia\Inertia;
 use App\Models\User;
+use App\Models\Status;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Auth\Events\Registered;
 
 class UserController extends Controller
 {
@@ -23,17 +28,44 @@ class UserController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $statusData = Status::where('organisation_id', $request->user()->organisation_id)
+            ->orWhereNull('organisation_id')
+            ->get();
+
+        // Using the map method, transform the data.
+        $statuses = $statusData->map(function ($status) {
+            return [
+                'value' => $status->id ?? null,
+                'label' => ucwords($status->name) ?? $status->id ?? null
+            ];
+        })->toArray();
+
+        // Return the view for creating a new user.
+        return Inertia::render('User/UserCreateOrEdit', [
+            'statuses' => $statuses,
+        ]);
     }
 
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(StoreUserRequest $request)
     {
-        //
+        // Get the data for the user.
+        $data = $request->safe()->only(['name', 'email', 'status_id']);
+
+        $user = User::create([
+            'name' => $request->name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'status_id' => $data['status_id'] ?? Status::ACTIVE,
+            'organisation_id' => (auth()->user()->hasRole('super')) ? $data['organisation_id'] : auth()->user()->organisation_id
+        ]);
+
+        event(new Registered($user));
+        return Inertia::render('User/UsersIndex', ['users' => $this->getUsers()]);
     }
 
     /**
@@ -74,7 +106,7 @@ class UserController extends Controller
         }
 
         // Get the data for the user.
-        $data = $request->safe()->only(['name', 'email']);
+        $data = $request->safe()->only(['name', 'email', 'status_id']);
         $updated = $user->update($data);
 
         // Redirect back to the user index page or show page
@@ -100,6 +132,11 @@ class UserController extends Controller
         return response()->json(['status' => 'success', 'user' => $user]);
     }
 
+    /**
+     * Returns a listing of all users.
+     *
+     * @return void
+     */
     private function getUsers()
     {
         if (\Auth::user()->hasRole('super')) {

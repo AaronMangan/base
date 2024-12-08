@@ -48,9 +48,11 @@ class StatusSeeder extends Seeder
         $seedData = self::DATA;
         $seedData['custom']['organisation_id'] = $devOrg->id ?? null;
 
-        Status::create($seedData['active']);
-        Status::create($seedData['inactive']);
-        Status::create($seedData['deleted']);
-        Status::create($seedData['custom']);
+        Status::withoutEvents(function () use ($seedData) {
+            Status::create($seedData['active']);
+            Status::create($seedData['inactive']);
+            Status::create($seedData['deleted']);
+            Status::create($seedData['custom']);
+        });
     }
 }
