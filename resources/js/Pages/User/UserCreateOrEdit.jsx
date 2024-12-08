@@ -2,14 +2,13 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head } from '@inertiajs/react';
 import { useState, useEffect } from 'react';
 import InputLabel from '@/Components/InputLabel';
-// import SelectBox from '@/Components/SelectBox';
+import { toast } from 'react-toastify';
 import Select from 'react-select';
 import InputError from '@/Components/InputError';
 
 export default function UserCreateOrEdit({auth, statuses}) {
   const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
-  const [successMessage, setSuccessMessage] = useState('');
   
   const handleChange = (e) => {
       const { name, value } = e.target;
@@ -17,7 +16,6 @@ export default function UserCreateOrEdit({auth, statuses}) {
         ...formData,
         [name]: value,
       });
-      console.log(formData);
   };
   const [formData, setFormData] = useState({
     name: '',
@@ -32,19 +30,18 @@ export default function UserCreateOrEdit({auth, statuses}) {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-    setSuccessMessage('');
-
     try {
       const response = await axios.post(route('users.create'), formData);
 
       if (response.status === 200) {
-        setSuccessMessage('Registration successful!');
+        toast.success('User created successfully');
         setFormData({
           name: '',
           email: '',
           password: '',
           password_confirmation: '',
         });
+        setLoading(false);
       }
     } catch (error) {
       setLoading(false);
@@ -68,10 +65,6 @@ export default function UserCreateOrEdit({auth, statuses}) {
             <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg dark:bg-gray-800">
               <div className="p-6 text-gray-900 dark:text-gray-100">
                 <h2 className="text-2xl font-bold text-center">New User</h2>
-                {successMessage && (
-                  <div className="mb-4 text-center text-green-600">{successMessage}</div>
-                )}
-
                 {/* Create New User Form */}
                 <form onSubmit={handleSubmit}>
                   {/* Name */}
